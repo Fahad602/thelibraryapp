@@ -22,4 +22,6 @@ app.config.from_object(Config)
 root_db.init_app(app)
 login_manager.init_app(app)
 ma.init_app(app)
-migrate = Migrate(app, root_db)
+with app.app_context():
+    root_db.create_all()
+# migrate = Migrate(app, root_db)
