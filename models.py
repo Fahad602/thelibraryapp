@@ -110,4 +110,4 @@ class UserListSchema(ma.Schema):
         fields = ['id', 'email', 'f_name', 'l_name', 'user_id', 'year']
 
 user_list_schema = UserListSchema()
-user_list_schema = UserListSchema(many=True)
+user_lists_schema = UserListSchema(many=True)

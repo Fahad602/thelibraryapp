@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from helpers import token_required
-from models import db, User, Contact, contact_schema, contacts_schema, UserList, user_list_schema, books_schema, check_password_hash
+from models import db, User, Contact, contact_schema, contacts_schema, UserList, user_list_schema, user_lists_schema, check_password_hash
 from flask_login import login_user
 
 api = Blueprint('api',__name__, url_prefix='/api')
@@ -109,7 +109,7 @@ def create_book(current_user_token):
 def get_books(current_user_token):
     # user_id = current_user_token.token 
     books = UserList.query.all()
-    response = books_schema.dump(books)
+    response = user_lists_schema.dump(books)
     return jsonify(response)
 
 
