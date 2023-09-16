@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from helpers import token_required
-from models import db, User, Contact, contact_schema, contacts_schema, Book, user_list_schema, books_schema, check_password_hash
+from models import db, User, Contact, contact_schema, contacts_schema, UserList, user_list_schema, books_schema, check_password_hash
 from flask_login import login_user
 
 api = Blueprint('api',__name__, url_prefix='/api')
@@ -94,7 +94,7 @@ def create_book(current_user_token):
     year = request.json['year']
     
     
-    user = Book(email, f_name, l_name, user_id, year)
+    user = UserList(email, f_name, l_name, user_id, year)
 
     db.session.add(user)
     db.session.commit()
@@ -107,8 +107,8 @@ def create_book(current_user_token):
 @api.route('/books', methods = ['GET'])
 @token_required
 def get_books(current_user_token):
-    user_id = current_user_token.token 
-    books = Book.query.filter_by(user_id = user_id).all()
+    # user_id = current_user_token.token 
+    books = UserList.query.all()
     response = books_schema.dump(books)
     return jsonify(response)
 
@@ -118,7 +118,7 @@ def get_books(current_user_token):
 def get_single_book(current_user_token, id):
     book_Token = current_user_token.token
     if book_Token == current_user_token.token:
-        book = Book.query.get(id)
+        book = UserList.query.get(id)
         response = user_list_schema.dump(book)
         return jsonify(response)
     else:
@@ -128,13 +128,12 @@ def get_single_book(current_user_token, id):
 @api.route('/books/<id>', methods = ['POST','PUT'])
 @token_required
 def update_book(current_user_token, id):
-    book = Book.query.get(id) 
-    book.isbn = request.json['isbn']
+    book = UserList.query.get(id) 
+    book.email = request.json['email']
+    book.f_name = request.json['f_name']
+    book.l_name = request.json['l_name']
+    book.user_id = request.json['user_id']
     book.year = request.json['year']
-    book.title = request.json['title']
-    book.pages = request.json['pages']
-    book.author = request.json['author']
-    book.user_id = current_user_token.token
 
     db.session.commit()
     response = user_list_schema.dump(book)
@@ -143,7 +142,7 @@ def update_book(current_user_token, id):
 @api.route('/books/<id>', methods = ['DELETE'])
 @token_required
 def delete_book(current_user_token, id):
-    book = Book.query.get(id)
+    book = UserList.query.get(id)
     db.session.delete(book)
     db.session.commit()
     response = user_list_schema.dump(book)
